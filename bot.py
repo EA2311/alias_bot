@@ -8,19 +8,19 @@ config = dotenv_values(".env")
 bot = telebot.TeleBot(config["BOT_TOKEN"])
 
 answer = ""  # правильна відповідь
-words = []  # список обраниз слів
+words = []  # список обраних слів
 player = ""  # ведучий гравець
 scoring = {}  # словник (нікнейм гравця: кількість балів)
 
 
-# зчитує слова за файлу та перемішує їх
-def reset_words(fname):
+def reset_words(file_name):
+
     global words
 
-    f = open(f"{fname}.txt", "r", encoding="UTF-8")
+    f = open(f"{file_name}.txt", "r", encoding="UTF-8")
     words = f.read().split("\n")
     f.close()
-    random.shuffle(words)  # перемішує список слів
+    random.shuffle(words)
 
 
 def add_buttons(button_type='both'):
@@ -30,11 +30,11 @@ def add_buttons(button_type='both'):
     :return: InlineKeyboardMarkup with some InlineKeyboardButton.
     """
     markup_inline = types.InlineKeyboardMarkup()
-    show_button = types.InlineKeyboardButton(text='подивитись слово 👀', callback_data='show')
-    next_button = types.InlineKeyboardButton(text='наступне слово 🔜', callback_data='next')
-    animals_button = types.InlineKeyboardButton(text='тварини', callback_data="animals")
-    technicals_button = types.InlineKeyboardButton(text='професії', callback_data="technical")
-    new_round_button = types.InlineKeyboardButton(text='наступний раунд 🔜', callback_data='new_round')
+    show_button = types.InlineKeyboardButton(text='Моє слово 👀', callback_data='show')
+    next_button = types.InlineKeyboardButton(text='Оновити слово 🔜', callback_data='next')
+    animals_button = types.InlineKeyboardButton(text='Тварини', callback_data='animals')
+    technicals_button = types.InlineKeyboardButton(text='Професії', callback_data='technical')
+    new_round_button = types.InlineKeyboardButton(text='Наступний раунд 🔜', callback_data='new_round')
 
     if button_type == 'show':
         return markup_inline.add(show_button)
@@ -65,13 +65,13 @@ def start_new_round(call, category=None):
                      reply_markup=add_buttons())
 
 
-@bot.message_handler(commands=["start"])
+@bot.message_handler(commands=['start'])
 def start(message):
     global player
     player = message.from_user.username
     bot.send_message(
         message.chat.id,
-        text=f'Привіт {message.from_user.first_name} обери тему для гри 🎮',
+        text=f'Привіт {message.from_user.first_name}! Обери тему для гри 🎮',
         reply_markup=add_buttons('categories')
     )
 
@@ -88,7 +88,7 @@ def check_inline_keyboard(call):
         if call.from_user.username == player:
             bot.answer_callback_query(call.id, text=answer, show_alert=True)
         else:
-            bot.answer_callback_query(call.id, text='неможна ❌', show_alert=True)
+            bot.answer_callback_query(call.id, text='Неможна ❌', show_alert=True)
     elif call.data == 'next':
         if call.from_user.username == player:
             answer = words.pop()
@@ -98,7 +98,7 @@ def check_inline_keyboard(call):
         start_new_round(call)
 
 
-@bot.message_handler(content_types=["text"])
+@bot.message_handler(content_types=['text'])
 def check_word(message):
     """
     Checks whether the word is equal to the correct answer and adds a point to the user who guessed the word.
@@ -113,13 +113,13 @@ def check_word(message):
             scoring[current_user] += 1
             current_user_score = scoring[current_user]
             if current_user_score == 10:
-                bot.send_message(chat_id, text=f'гравець {current_user} переміг 🎀')
+                bot.send_message(chat_id, text=f'Гравець {current_user} переміг 🎀')
             else:
-                bot.send_message(chat_id, text=f'ти відгадав, у {current_user} {current_user_score} балів',
+                bot.send_message(chat_id, text=f'Ти відгадав! У {current_user} {current_user_score} балів',
                                  reply_markup=add_buttons('new_round'))
         else:
             scoring[current_user] = 1
-            bot.send_message(chat_id, text=f'ти відгадав, у {current_user} {scoring[current_user]} балів',
+            bot.send_message(chat_id, text=f'Ти відгадав! У {current_user} {scoring[current_user]} балів',
                              reply_markup=add_buttons('new_round'))
 
 
