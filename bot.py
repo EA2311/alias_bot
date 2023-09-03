@@ -30,17 +30,19 @@ def add_buttons(button_type='both'):
     :return: InlineKeyboardMarkup with some InlineKeyboardButton.
     """
     markup_inline = types.InlineKeyboardMarkup()
+    show_button = types.InlineKeyboardButton(text='подивитись слово 👀', callback_data='show')
+    next_button = types.InlineKeyboardButton(text='наступне слово 🔜', callback_data='next')
+    animals_button = types.InlineKeyboardButton(text='тварини', callback_data="animals")
+    technicals_button = types.InlineKeyboardButton(text='професії', callback_data="technical")
 
     if button_type == 'show':
-        return markup_inline.add(types.InlineKeyboardButton(text='подивитись слово 👀', callback_data='show'))
+        return markup_inline.add(show_button)
     elif button_type == 'next':
-        return markup_inline.add(types.InlineKeyboardButton(text='наступне слово 🔜', callback_data='next'))
+        return markup_inline.add(next_button)
     elif button_type == 'categories':
-        return markup_inline.add(types.InlineKeyboardButton(text='тварини', callback_data="animals"),
-                                 types.InlineKeyboardButton(text='професії', callback_data="technical"))
+        return markup_inline.add(animals_button, technicals_button)
     else:
-        return markup_inline.add(types.InlineKeyboardButton(text='подивитись слово 👀', callback_data='show'),
-                                 types.InlineKeyboardButton(text='наступне слово 🔜', callback_data='next'))
+        return markup_inline.add(show_button, next_button)
 
 
 @bot.message_handler(commands=["start"])
@@ -57,44 +59,39 @@ def start(message):
 
 
 @bot.callback_query_handler(func=lambda call: True)
-def сheck_inline_keyboard(call):
+def check_inline_keyboard(call):
     global answer, words, player
 
-    if call.data == "animals":
-        reset_words("animals")
+    if call.data == 'animals':
+        reset_words('animals')
         answer = words.pop()
-
         player = call.from_user.username
-
-        bot.send_message(call.message.chat.id, text=f"Зараз пояснює слово {call.from_user.first_name} 🧠",
+        bot.send_message(call.message.chat.id, text=f'Зараз пояснює слово {call.from_user.first_name} 🧠',
                          reply_markup=add_buttons())
 
-    elif call.data == "technical":
-        reset_words("technicals")
+    elif call.data == 'technical':
+        reset_words('technicals')
         answer = words.pop()
-
         player = call.from_user.username
-        bot.send_message(call.message.chat.id, text=f"Зараз пояснює слово  {call.from_user.first_name}  🧠",
+        bot.send_message(call.message.chat.id, text=f'Зараз пояснює слово  {call.from_user.first_name}  🧠',
                          reply_markup=add_buttons())
 
-    elif call.data == "show":
+    elif call.data == 'show':
         if call.from_user.username == player:
             bot.answer_callback_query(call.id, text=answer, show_alert=True)
         else:
-            bot.answer_callback_query(call.id, text="неможна ❌", show_alert=True)
+            bot.answer_callback_query(call.id, text='неможна ❌', show_alert=True)
 
-    elif call.data == "next":
+    elif call.data == 'next':
         if call.from_user.username == player:
             answer = words.pop()
         else:
             bot.answer_callback_query(call.id, text='Не твоя черга!', show_alert=True)
 
-    elif call.data == "new":
+    elif call.data == 'new':
         answer = words.pop()
-
         player = call.from_user.username
-        print(player)
-        bot.send_message(call.message.chat.id, text=f"Зараз пояснює слово  {call.from_user.first_name}  🧠",
+        bot.send_message(call.message.chat.id, text=f'Зараз пояснює слово  {call.from_user.first_name}  🧠',
                          reply_markup=add_buttons())
 
 
@@ -117,17 +114,17 @@ def check_word(message):
             current_user_score = scoring[current_user]
 
             if current_user_score == 10:
-                bot.send_message(chat_id, text=f"гравець {current_user} переміг 🎀", reply_markup=markup_inline)
+                bot.send_message(chat_id, text=f'гравець {current_user} переміг 🎀', reply_markup=markup_inline)
             else:
-                next_button = types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="new")
+                next_button = types.InlineKeyboardButton(text='наступне слово 🔜', callback_data='new')
                 markup_inline.add(next_button)
-                bot.send_message(chat_id, text=f"ти відгадав, у {current_user} {current_user_score} балів",
+                bot.send_message(chat_id, text=f'ти відгадав, у {current_user} {current_user_score} балів',
                                  reply_markup=markup_inline)
         else:
             scoring[current_user] = 1
-            next_button = types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="new")
+            next_button = types.InlineKeyboardButton(text='наступне слово 🔜', callback_data='new')
             markup_inline.add(next_button)
-            bot.send_message(chat_id, text=f"ти відгадав, у {current_user} {scoring[current_user]} балів",
+            bot.send_message(chat_id, text=f'ти відгадав, у {current_user} {scoring[current_user]} балів',
                              reply_markup=markup_inline)
 
 
