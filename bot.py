@@ -48,13 +48,17 @@ def add_buttons(button_type='both'):
         return markup_inline.add(show_button, next_button)
 
 
-def start_new_round(call):
+def start_new_round(call, category=None):
     """
     Get a new word for a player that will explain it and send a message with that player's username.
+
+    :param category: specifies which word category will be reset to start a new game, optional
     :param call:
     """
     global answer, words, player
 
+    if category:
+        reset_words(category)
     answer = words.pop()
     player = call.from_user.username
     bot.send_message(call.message.chat.id, text=f'Зараз пояснює слово {call.from_user.first_name} 🧠',
@@ -64,12 +68,10 @@ def start_new_round(call):
 @bot.message_handler(commands=["start"])
 def start(message):
     global player
-
     player = message.from_user.username
-
     bot.send_message(
         message.chat.id,
-        text=f"Привіт {message.from_user.first_name} обери тему для гри 🎮",
+        text=f'Привіт {message.from_user.first_name} обери тему для гри 🎮',
         reply_markup=add_buttons('categories')
     )
 
@@ -79,11 +81,9 @@ def check_inline_keyboard(call):
     global answer, words, player
 
     if call.data == 'animals':
-        reset_words('animals')
-        start_new_round(call)
+        start_new_round(call, 'animals')
     elif call.data == 'technical':
-        reset_words('technicals')
-        start_new_round(call)
+        start_new_round(call, 'technical')
     elif call.data == 'show':
         if call.from_user.username == player:
             bot.answer_callback_query(call.id, text=answer, show_alert=True)
