@@ -1,7 +1,9 @@
-import telebot
-from telebot import types
 import random
+
+import telebot
 from dotenv import dotenv_values
+from telebot import types
+
 
 config = dotenv_values(".env")
 
