@@ -100,18 +100,17 @@ def check_word(message):
         markup_inline = types.InlineKeyboardMarkup()
 
         if current_user in scoring.keys():  # якщо нік гравця є в словнику scoring
-            scoring[current_user] += 1
+            current_user_score = scoring[current_user] + 1
+
+            if current_user_score == 10:
+                bot.send_message(chat_id, text=f"гравець {current_user} переміг 🎀", reply_markup=markup_inline)
+            else:
+                next_button = types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="next")
+                markup_inline.add(next_button)
+                bot.send_message(chat_id, text=f"ти відгадав, у {current_user} {current_user_score} балів",
+                                 reply_markup=markup_inline)
         else:
             scoring[current_user] = 1
-        current_user_score = scoring[current_user]
-
-        if current_user_score == 10:
-            bot.send_message(chat_id, text=f"гравець {current_user} переміг 🎀", reply_markup=markup_inline)
-        else:
-            btn1 = types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="next")
-            markup_inline.add(btn1)
-            bot.send_message(chat_id, text=f"ти відгадав, у {current_user} {current_user_score} балів",
-                             reply_markup=markup_inline)
 
 
 bot.polling(none_stop=True)
