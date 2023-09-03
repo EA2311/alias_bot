@@ -32,30 +32,27 @@ def add_buttons(button_type='both'):
     markup_inline = types.InlineKeyboardMarkup()
 
     if button_type == 'show':
-        return markup_inline.add(types.InlineKeyboardButton(text="подивитись слово 👀", callback_data="show"))
+        return markup_inline.add(types.InlineKeyboardButton(text='подивитись слово 👀', callback_data='show'))
     elif button_type == 'next':
-        return markup_inline.add(types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="next"))
+        return markup_inline.add(types.InlineKeyboardButton(text='наступне слово 🔜', callback_data='next'))
+    elif button_type == 'categories':
+        return markup_inline.add(types.InlineKeyboardButton(text='тварини', callback_data="animals"),
+                                 types.InlineKeyboardButton(text='професії', callback_data="technical"))
     else:
-        return markup_inline.add(types.InlineKeyboardButton(text="подивитись слово 👀", callback_data="show"),
-                                 types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="next"))
+        return markup_inline.add(types.InlineKeyboardButton(text='подивитись слово 👀', callback_data='show'),
+                                 types.InlineKeyboardButton(text='наступне слово 🔜', callback_data='next'))
 
 
 @bot.message_handler(commands=["start"])
 def start(message):
     global player
-    markup_inline = types.InlineKeyboardMarkup()
-
-    animals_button = types.InlineKeyboardButton(text="тварини", callback_data="animals")
-    technicals_button = types.InlineKeyboardButton(text="професії", callback_data="technical")
-
-    markup_inline.add(animals_button)
-    markup_inline.add(technicals_button)
 
     player = message.from_user.username
+
     bot.send_message(
         message.chat.id,
         text=f"Привіт {message.from_user.first_name} обери тему для гри 🎮",
-        reply_markup=markup_inline
+        reply_markup=add_buttons('categories')
     )
 
 
