@@ -1,4 +1,5 @@
 import random
+import requests
 
 import telebot
 from dotenv import dotenv_values
@@ -69,6 +70,14 @@ def start_new_round(call, category=None):
     player = call.from_user.username
     bot.send_message(call.message.chat.id, text=f'Зараз пояснює слово {call.from_user.first_name} 🧠',
                      reply_markup=add_buttons())
+
+
+@bot.message_handler(commands=['joke'])
+def joke(message):
+    url = 'https://icanhazdadjoke.com/'
+    headers = {'Accept': 'text/plain'}
+    response = requests.get(url, headers=headers)
+    bot.send_message(message.chat.id, text=response.text)
 
 
 @bot.message_handler(commands=['start'])
