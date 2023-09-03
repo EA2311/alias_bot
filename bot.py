@@ -23,17 +23,34 @@ def reset_words(fname):
     random.shuffle(words)  # перемішує список слів
 
 
+def add_buttons(button_type='both'):
+    """
+    Create markup_inline with certain buttons inside.
+    :param button_type:
+    :return: InlineKeyboardMarkup with some InlineKeyboardButton.
+    """
+    markup_inline = types.InlineKeyboardMarkup()
+
+    if button_type == 'show':
+        return markup_inline.add(types.InlineKeyboardButton(text="подивитись слово 👀", callback_data="show"))
+    elif button_type == 'next':
+        return markup_inline.add(types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="next"))
+    else:
+        return markup_inline.add(types.InlineKeyboardButton(text="подивитись слово 👀", callback_data="show"),
+                                 types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="next"))
+
+
 @bot.message_handler(commands=["start"])
 def start(message):
     global player
 
     markup_inline = types.InlineKeyboardMarkup()
 
-    btn1 = types.InlineKeyboardButton(text="тварини", callback_data="animals")
-    btn2 = types.InlineKeyboardButton(text="професії", callback_data="technical")
+    animals_button = types.InlineKeyboardButton(text="тварини", callback_data="animals")
+    technicals_button = types.InlineKeyboardButton(text="професії", callback_data="technical")
 
-    markup_inline.add(btn1)
-    markup_inline.add(btn2)
+    markup_inline.add(animals_button)
+    markup_inline.add(technicals_button)
 
     player = message.from_user.username
     bot.send_message(
@@ -47,42 +64,34 @@ def start(message):
 def сheck_inline_keyboard(call):
     global answer, words, player
 
-    if call.data == "show":
+    if call.data == "animals":
+        reset_words("animals")
+        answer = words.pop()
+
+        player = call.from_user.username
+
+        bot.send_message(call.message.chat.id, text=f"Зараз пояснює слово {call.from_user.first_name} 🧠",
+                         reply_markup=add_buttons())
+
+    elif call.data == "technical":
+        reset_words("technicals")
+        answer = words.pop()
+
+        player = call.from_user.username
+        bot.send_message(call.message.chat.id, text=f"Зараз пояснює слово  {call.from_user.first_name}  🧠",
+                         reply_markup=add_buttons())
+
+    elif call.data == "show":
         if call.from_user.username == player:
             bot.answer_callback_query(call.id, text=answer, show_alert=True)
         else:
             bot.answer_callback_query(call.id, text="неможна ❌", show_alert=True)
+
     elif call.data == "next":
         if call.from_user.username == player:
             answer = words.pop()
         else:
             bot.answer_callback_query(call.id, text='Не твоя черга!', show_alert=True)
-    elif call.data == "animals":
-        markup_inline = types.InlineKeyboardMarkup()
-        reset_words("animals")
-        answer = words.pop()
-
-        show_button = types.InlineKeyboardButton(text="подивитись слово 👀", callback_data="show")
-        next_button = types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="next")
-
-        markup_inline.add(show_button)
-        markup_inline.add(next_button)
-        player = call.from_user.username
-        bot.send_message(call.message.chat.id, text=f"Зараз пояснює слово {call.from_user.first_name} 🧠",
-                         reply_markup=markup_inline)
-    elif call.data == "technical":
-        markup_inline = types.InlineKeyboardMarkup()
-        reset_words("technical")
-        answer = words.pop()
-
-        show_button = types.InlineKeyboardButton(text="подивитись слово 👀", callback_data="show")
-        next_button = types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="next")
-
-        markup_inline.add(show_button)
-        markup_inline.add(next_button)
-        player = call.from_user.username
-        bot.send_message(call.message.chat.id, text=f"Зараз пояснює слово  {call.from_user.first_name}  🧠",
-                         reply_markup=markup_inline)
 
 
 @bot.message_handler(content_types=["text"])
