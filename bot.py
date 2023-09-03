@@ -87,6 +87,10 @@ def сheck_inline_keyboard(call):
 
 @bot.message_handler(content_types=["text"])
 def check_word(message):
+    """
+    Checks whether the word is equal to the correct answer and adds a point to the user who guessed the word.
+    If the player who guessed the last word scores 10 points, he wins and the game ends.
+    """
     global scoring
 
     current_user = message.from_user.username
