@@ -14,7 +14,11 @@ scoring = {}  # словник (нікнейм гравця: кількість 
 
 
 def reset_words(file_name):
-
+    """
+    Read the file and put all words into the list. Then shuffle it.
+    :param file_name: name of a txt file to read
+    :return:
+    """
     global words
 
     f = open(f"{file_name}.txt", "r", encoding="UTF-8")
