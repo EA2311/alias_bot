@@ -43,7 +43,6 @@ def add_buttons(button_type='both'):
 @bot.message_handler(commands=["start"])
 def start(message):
     global player
-
     markup_inline = types.InlineKeyboardMarkup()
 
     animals_button = types.InlineKeyboardButton(text="тварини", callback_data="animals")
@@ -93,6 +92,14 @@ def сheck_inline_keyboard(call):
         else:
             bot.answer_callback_query(call.id, text='Не твоя черга!', show_alert=True)
 
+    elif call.data == "new":
+        answer = words.pop()
+
+        player = call.from_user.username
+        print(player)
+        bot.send_message(call.message.chat.id, text=f"Зараз пояснює слово  {call.from_user.first_name}  🧠",
+                         reply_markup=add_buttons())
+
 
 @bot.message_handler(content_types=["text"])
 def check_word(message):
@@ -101,7 +108,7 @@ def check_word(message):
     If the player who guessed the last word scores 10 points, he wins and the game ends.
     """
     global scoring
-
+    print('message')
     current_user = message.from_user.username
     chat_id = message.chat.id
 
@@ -109,17 +116,22 @@ def check_word(message):
         markup_inline = types.InlineKeyboardMarkup()
 
         if current_user in scoring.keys():  # якщо нік гравця є в словнику scoring
-            current_user_score = scoring[current_user] + 1
+            scoring[current_user] += 1
+            current_user_score = scoring[current_user]
 
             if current_user_score == 10:
                 bot.send_message(chat_id, text=f"гравець {current_user} переміг 🎀", reply_markup=markup_inline)
             else:
-                next_button = types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="next")
+                next_button = types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="new")
                 markup_inline.add(next_button)
                 bot.send_message(chat_id, text=f"ти відгадав, у {current_user} {current_user_score} балів",
                                  reply_markup=markup_inline)
         else:
             scoring[current_user] = 1
+            next_button = types.InlineKeyboardButton(text="наступне слово 🔜", callback_data="new")
+            markup_inline.add(next_button)
+            bot.send_message(chat_id, text=f"ти відгадав, у {current_user} {scoring[current_user]} балів",
+                             reply_markup=markup_inline)
 
 
 bot.polling(none_stop=True)
