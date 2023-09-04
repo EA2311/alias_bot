@@ -36,8 +36,8 @@ def start(message):
 def check_inline_keyboard(call):
     if call.data == 'animals':
         start_new_round(call, bot, 'animals')
-    elif call.data == 'technical':
-        start_new_round(call, bot, 'technical')
+    elif call.data == 'technicals':
+        start_new_round(call, bot, 'technicals')
     elif call.data == 'show':
         if call.from_user.username == config.player:
             bot.answer_callback_query(call.id, text=config.answer, show_alert=True)

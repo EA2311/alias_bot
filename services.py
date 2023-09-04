@@ -10,7 +10,7 @@ def _reset_words(file_name):
     :param file_name: name of a txt file to read
     :return:
     """
-    f = open(f"{file_name}.txt", "r", encoding="UTF-8")
+    f = open(f"data\\{file_name}.txt", "r", encoding="UTF-8")
     config.words = f.read().split("\n")
     f.close()
     random.shuffle(config.words)
@@ -26,7 +26,7 @@ def add_buttons(button_type='both'):
     show_button = types.InlineKeyboardButton(text='Моє слово 👀', callback_data='show')
     next_button = types.InlineKeyboardButton(text='Оновити слово 🔜', callback_data='next')
     animals_button = types.InlineKeyboardButton(text='Тварини', callback_data='animals')
-    technicals_button = types.InlineKeyboardButton(text='Професії', callback_data='technical')
+    technicals_button = types.InlineKeyboardButton(text='Професії', callback_data='technicals')
     new_round_button = types.InlineKeyboardButton(text='Наступний раунд 🔜', callback_data='new_round')
 
     if button_type == 'show':
