@@ -1,4 +1,5 @@
 import random
+import config
 
 from telebot import types
 
@@ -9,12 +10,10 @@ def _reset_words(file_name):
     :param file_name: name of a txt file to read
     :return:
     """
-    global words
-
     f = open(f"{file_name}.txt", "r", encoding="UTF-8")
-    words = f.read().split("\n")
+    config.words = f.read().split("\n")
     f.close()
-    random.shuffle(words)
+    random.shuffle(config.words)
 
 
 def add_buttons(button_type='both'):
@@ -46,14 +45,13 @@ def start_new_round(call, bot, category=None):
     """
     Get a new word for a player that will explain it and send a message with that player's username.
 
+    :param bot:
     :param category: specifies which word category will be reset to start a new game, optional
     :param call:
     """
-    global answer, words, player
-
     if category:
         _reset_words(category)
-    answer = words.pop()
-    player = call.from_user.username
+    config.answer = config.words.pop()
+    config.player = call.from_user.username
     bot.send_message(call.message.chat.id, text=f'Зараз пояснює слово {call.from_user.first_name} 🧠',
                      reply_markup=add_buttons())
