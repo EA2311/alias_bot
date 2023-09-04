@@ -74,10 +74,9 @@ def start_new_round(call, category=None):
 
 @bot.message_handler(commands=['joke'])
 def joke(message):
-    url = 'https://icanhazdadjoke.com/'
-    headers = {'Accept': 'text/plain'}
-    response = requests.get(url, headers=headers)
-    bot.send_message(message.chat.id, text=response.text)
+    url = 'https://geek-jokes.sameerkumar.website/api?format=text'
+    response = requests.get(url).text.strip('"')
+    bot.send_message(message.chat.id, text=response)
 
 
 @bot.message_handler(commands=['start'])
