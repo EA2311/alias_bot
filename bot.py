@@ -75,8 +75,12 @@ def start_new_round(call, category=None):
 @bot.message_handler(commands=['joke'])
 def joke(message):
     url = 'https://geek-jokes.sameerkumar.website/api?format=text'
-    response = requests.get(url).text.strip('"')
-    bot.send_message(message.chat.id, text=response)
+    response = requests.get(url).text.strip()
+
+    from deep_translator import MyMemoryTranslator
+    translated = MyMemoryTranslator(source="en-US", target="uk-UA").translate(text=response)
+
+    bot.send_message(message.chat.id, text=translated)
 
 
 @bot.message_handler(commands=['start'])
