@@ -7,8 +7,8 @@ from telebot import types
 def _reset_words(file_name):
     """
     Read the file and put all words into the list. Then shuffle it.
+
     :param file_name: name of a txt file to read
-    :return:
     """
     f = open(f"data\\{file_name}.txt", "r", encoding="UTF-8")
     config.words = f.read().split("\n")
@@ -19,8 +19,10 @@ def _reset_words(file_name):
 def add_buttons(button_type='both'):
     """
     Create markup_inline with certain buttons inside.
-    :param button_type:
-    :return: InlineKeyboardMarkup with some InlineKeyboardButton.
+
+    :param button_type: a type of the inline keyboard button - 'show', 'next', 'animals', 'professions', 'new_round' or
+    'both' by default
+    :return: InlineKeyboardMarkup with some InlineKeyboardButton
     """
     markup_inline = types.InlineKeyboardMarkup()
     show_button = types.InlineKeyboardButton(text='Моє слово 👀', callback_data='show')
@@ -45,9 +47,9 @@ def start_new_round(call, bot, category=None):
     """
     Get a new word for a player that will explain it and send a message with that player's username.
 
-    :param bot:
+    :param call: a data that user send to the bot by inline keyboard
+    :param bot: a bot object (TeleBot instance)
     :param category: specifies which word category will be reset to start a new game, optional
-    :param call:
     """
     if category:
         _reset_words(category)

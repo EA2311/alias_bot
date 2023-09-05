@@ -9,8 +9,30 @@ config.init()
 bot = telebot.TeleBot(config.token)
 
 
+@bot.message_handler(commands=['start'])
+def start(message):
+    """
+    Start command. Responds to the command by sending messages and buttons to select the game category.
+    That is, it is responsible for starting a new game.
+
+    :param message: a text message that user sent to the bot
+    """
+    config.player = message.from_user.username
+    bot.send_message(
+        message.chat.id,
+        text=f'Привіт {message.from_user.first_name}! Обери тему для гри 🎮',
+        reply_markup=add_buttons('categories')
+    )
+
+
 @bot.message_handler(commands=['joke'])
 def joke(message):
+    """
+    Joke command. Responds to the command by sending a random joke from 'geek-jokes.sameerkumar.website' translating
+    it into Ukrainian language.
+
+    :param message: a text message that user sent to the bot
+    """
     url = 'https://geek-jokes.sameerkumar.website/api?format=text'
     response = requests.get(url).text.strip('"')
 
@@ -20,18 +42,13 @@ def joke(message):
     bot.send_message(message.chat.id, text=translated)
 
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    config.player = message.from_user.username
-    bot.send_message(
-        message.chat.id,
-        text=f'Привіт {message.from_user.first_name}! Обери тему для гри 🎮',
-        reply_markup=add_buttons('categories')
-    )
-
-
 @bot.callback_query_handler(func=lambda call: True)
 def check_inline_keyboard(call):
+    """
+    Check what data comes from the user's call and respond accordingly to this call.
+
+    :param call: a data that user send to the bot by inline keyboard
+    """
     if call.data == 'animals':
         start_new_round(call, bot, 'animals')
     elif call.data == 'professions':
@@ -53,8 +70,10 @@ def check_inline_keyboard(call):
 @bot.message_handler(content_types=['text'])
 def check_word(message):
     """
-    Checks whether the word is equal to the correct answer and adds a point to the user who guessed the word.
+    Check whether the word is equal to the correct answer and adds a point to the user who guessed the word.
     If the player who guessed the last word scores 10 points, he wins and the game ends.
+
+    :param message: a text message that user sent to the bot
     """
     current_user = message.from_user.username
     chat_id = message.chat.id
