@@ -26,7 +26,7 @@ def add_buttons(button_type='both'):
     show_button = types.InlineKeyboardButton(text='Моє слово 👀', callback_data='show')
     next_button = types.InlineKeyboardButton(text='Оновити слово 🔜', callback_data='next')
     animals_button = types.InlineKeyboardButton(text='Тварини', callback_data='animals')
-    technicals_button = types.InlineKeyboardButton(text='Професії', callback_data='technicals')
+    technicals_button = types.InlineKeyboardButton(text='Професії', callback_data='professions')
     new_round_button = types.InlineKeyboardButton(text='Наступний раунд 🔜', callback_data='new_round')
 
     if button_type == 'show':

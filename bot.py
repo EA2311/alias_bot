@@ -1,10 +1,8 @@
 import requests
-
 import telebot
 
-from services import add_buttons, start_new_round
 import config
-
+from services import add_buttons, start_new_round
 
 config.init()
 
@@ -36,8 +34,8 @@ def start(message):
 def check_inline_keyboard(call):
     if call.data == 'animals':
         start_new_round(call, bot, 'animals')
-    elif call.data == 'technicals':
-        start_new_round(call, bot, 'technicals')
+    elif call.data == 'professions':
+        start_new_round(call, bot, 'professions')
     elif call.data == 'show':
         if call.from_user.username == config.player:
             bot.answer_callback_query(call.id, text=config.answer, show_alert=True)
